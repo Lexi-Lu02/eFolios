@@ -10,7 +10,8 @@ export default {
   },
   setup() {
     const isbn = ref('');
-    const name = ref('');
+    const title = ref('');
+    const author = ref('');
     const bookListRef = ref(null);
 
     const addBook = async () => {
@@ -21,12 +22,17 @@ export default {
           return;
         }
 
-        await addDoc(collection(db, "books"), {
+        const docRef = await addDoc(collection(db, "books"), {
           isbn: isbnNumber,
-          name: name.value
+          title: title.value,
+          author: author.value
         });
+        console.log('Book added with ID:', docRef.id);
+        console.log('Original data:', {title: title.value, author: author.value});
+        
         isbn.value = '';
-        name.value = '';
+        title.value = '';
+        author.value = '';
         alert('Book added successfully!');
         
         // Refresh the BookList component
@@ -40,7 +46,8 @@ export default {
 
     return {
       isbn,
-      name,
+      title,
+      author,
       addBook,
       bookListRef
     };
@@ -68,12 +75,25 @@ export default {
           </div>
           
           <div class="mb-3">
-            <label for="name" class="form-label">Name:</label>
+            <label for="title" class="form-label">Title:</label>
             <input 
               type="text" 
               class="form-control" 
-              id="name" 
-              v-model="name"
+              id="title" 
+              v-model="title"
+              placeholder="Enter book title (will be auto-capitalized)"
+              required 
+            />
+          </div>
+          
+          <div class="mb-3">
+            <label for="author" class="form-label">Author:</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              id="author" 
+              v-model="author"
+              placeholder="Enter author name (will be auto-capitalized)"
               required 
             />
           </div>
